@@ -17,7 +17,7 @@ export default function SaveContact({ customer }: { customer: Customer }) {
     const url = URL.createObjectURL(blob);
     const aLink = document.createElement("a");
     aLink.href = url;
-    aLink.download = "contact.vcf";
+    aLink.download = `${customer.fullName}.vcf`;
     aLink.click();
     URL.revokeObjectURL(url);
   };
