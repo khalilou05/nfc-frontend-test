@@ -22,7 +22,7 @@ export default async function Page({
 
   return (
     <div className="flex flex-col h-dvh w-dvw">
-      <div className="h-[40%] relative shrink-0">
+      <div className="h-[50%] relative shrink-0">
         <Image
           src={`https://media.twenty-print.com/${customer.coverImg}`}
           fill
@@ -38,7 +38,7 @@ export default async function Page({
           />
         </div>
       </div>
-      <div className="h-full flex flex-col gap-6 bg-linear-to-b from-[#004f9f] to-transparent pt-16">
+      <div className="h-full flex flex-col gap-8 bg-linear-to-b from-[#004f9f] to-transparent pt-16">
         <div className="flex flex-col justify-center w-full items-center gap-3">
           <h1
             className="text-xl font-semibold
@@ -50,7 +50,7 @@ export default async function Page({
         </div>
 
         <div className="flex items-center flex-col">
-          <div className="w-[80%] grid grid-cols-2 place-items-center gap-7 [&>*]:scale-[1.5]">
+          <div className="w-[80%] grid grid-cols-2 place-items-center gap-14 [&>*]:scale-[2]">
             <Link href={`tel:${customer.phoneNumber}`}>
               <Phone />
             </Link>
