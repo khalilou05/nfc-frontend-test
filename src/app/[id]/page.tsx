@@ -41,7 +41,7 @@ export default async function Page({
       <div className="h-full flex flex-col gap-8 bg-linear-to-b from-[#004f9f] to-transparent pt-16">
         <div className="flex flex-col justify-center w-full items-center gap-3">
           <h1
-            className="text-2xl text-gray-300 font-semibold
+            className="text-2xl text-gray-100 font-semibold
 "
           >
             {customer.fullName}
