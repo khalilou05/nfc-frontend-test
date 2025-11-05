@@ -4,6 +4,7 @@ import Gmail from "@/icons/Gmail";
 import Phone from "@/icons/Phone";
 import { fetchApi } from "@/lib/utils";
 import type { Customer } from "@/types/types";
+
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,11 +22,6 @@ export default async function Page({
 
   return (
     <div className="flex flex-col h-dvh w-dvw">
-      <div className="text-center text-white bg-[#004f9f]">
-        <Link href={"https://www.facebook.com/share/1BLRQguH2s/"}>
-          TWENTY PRINT
-        </Link>
-      </div>
       <div className="h-[40%] relative shrink-0">
         <Image
           src={`https://media.twenty-print.com/${customer.coverImg}`}
