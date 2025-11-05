@@ -1,5 +1,6 @@
 import SaveContact from "@/components/SaveContact";
 
+import Gmail from "@/icons/Gmail";
 import Phone from "@/icons/Phone";
 import { fetchApi } from "@/lib/utils";
 import type { Customer } from "@/types/types";
@@ -20,10 +21,16 @@ export default async function Page({
 
   return (
     <div className="flex flex-col h-dvh w-dvw">
+      <div className="text-center text-white bg-[#004f9f]">
+        <Link href={"https://www.facebook.com/share/1BLRQguH2s/"}>
+          TWENTY PRINT
+        </Link>
+      </div>
       <div className="h-[40%] relative shrink-0">
         <Image
           src={`https://media.twenty-print.com/${customer.coverImg}`}
           fill
+          style={{ objectFit: "cover" }}
           alt="cover"
         />
         <div className="absolute h-25 w-25 left-[50%] top-[100%] translate-[-50%] border-3 border-[#004f9f] rounded-full overflow-hidden">
@@ -35,7 +42,7 @@ export default async function Page({
           />
         </div>
       </div>
-      <div className="h-full flex flex-col gap-4 bg-linear-to-b from-[#004f9f] to-transparent pt-16">
+      <div className="h-full flex flex-col gap-6 bg-linear-to-b from-[#004f9f] to-transparent pt-16">
         <div className="flex flex-col justify-center w-full items-center gap-3">
           <h1
             className="text-xl font-semibold
@@ -47,9 +54,12 @@ export default async function Page({
         </div>
 
         <div className="flex items-center flex-col">
-          <div className="w-[80%] flex flex-wrap justify-between gap-2">
+          <div className="w-[80%] grid grid-cols-2 place-items-center gap-7 [&>*]:scale-[1.5]">
             <Link href={`tel:${customer.phoneNumber}`}>
               <Phone />
+            </Link>
+            <Link href={`mailto:${customer.email}`}>
+              <Gmail />
             </Link>
             {Object.entries(JSON.parse(customer.socialMedia as string)).map(
               ([key, value]) => (
