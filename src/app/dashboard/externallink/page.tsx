@@ -122,7 +122,7 @@ export default function Page() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [link]);
+  });
 
   return (
     <div className="flex flex-col gap-3 p-4 sm:flex-row">
