@@ -28,6 +28,11 @@ const items = [
     url: "/dashboard/customers",
     icon: User,
   },
+  {
+    title: "إدخال رابط خارجي للبطاقة",
+    url: "/dashboard/externallink",
+    icon: User,
+  },
 ];
 
 export function AppSidebar() {
