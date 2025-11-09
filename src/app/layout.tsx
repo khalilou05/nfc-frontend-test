@@ -17,10 +17,6 @@ export const metadata: Metadata = {
   description: "TWENTY PRINT",
 };
 
-export const viewport: Viewport = {
-  themeColor: "#004f9f",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
