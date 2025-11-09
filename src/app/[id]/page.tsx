@@ -5,10 +5,15 @@ import Phone from "@/icons/Phone";
 import { fetchApi } from "@/lib/utils";
 import type { Customer } from "@/types/types";
 
+import type { Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { socialMedia } from "../../socialMedia";
+
+export const viewport: Viewport = {
+  themeColor: "#004f9f",
+};
 
 export default async function Page({
   params,
