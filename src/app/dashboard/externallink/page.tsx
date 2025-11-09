@@ -24,13 +24,17 @@ export default function Page() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+
   const qrRef = useRef<SVGSVGElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
     setLink(e.target.value);
-
-    setTimeout(() => {
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
       setLoading(false);
     }, 1000);
   };
@@ -115,7 +119,9 @@ export default function Page() {
     };
     const timeoutId = setTimeout(genQr, 1000);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [link]);
 
   return (
