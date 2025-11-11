@@ -3,8 +3,10 @@ export interface Customer {
   fullName: string;
   phoneNumber: string;
   email: string;
+  type: "customer" | "page";
+  absoluteUrl?: string;
   coverImg?: string;
   profileImg?: string;
-  socialMedia: Record<string, string> | string;
+  socialMedia?: Record<string, string> | string;
   createdAt?: string;
 }

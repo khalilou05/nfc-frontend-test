@@ -142,50 +142,65 @@ export default function Page({ params }: { params: Promise<{ id: number }> }) {
               value={customer?.email ?? ""}
             />
 
-            {customer?.socialMedia &&
-              Object.entries(customer?.socialMedia).map(([key, value]) => (
-                <Fragment key={key}>
-                  <Label htmlFor={key}>{socialMedia[key].label}</Label>
-                  <Input
-                    readOnly
-                    id={key}
-                    value={value ?? ""}
-                  />
-                </Fragment>
-              ))}
-            <div className="flex flex-col gap-3">
-              <AlertDialog open={isModalOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    onClick={() => {
-                      setModalOpen(true);
-                      writeNFC();
-                    }}
+            {customer?.type === "customer" ? (
+              <>
+                {customer?.socialMedia &&
+                  Object.entries(customer?.socialMedia).map(([key, value]) => (
+                    <Fragment key={key}>
+                      <Label htmlFor={key}>{socialMedia[key].label}</Label>
+                      <Input
+                        readOnly
+                        id={key}
+                        value={value ?? ""}
+                      />
+                    </Fragment>
+                  ))}
+              </>
+            ) : (
+              <>
+                <Label htmlFor="extUrl">الرابط</Label>
+                <Input
+                  id="extUrl"
+                  readOnly
+                  name="absoluteUrl"
+                  value={customer?.absoluteUrl ?? ""}
+                />
+              </>
+            )}
+          </div>
+          <div>&nbsp;</div>
+          <div className="flex flex-col gap-3">
+            <AlertDialog open={isModalOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  onClick={() => {
+                    setModalOpen(true);
+                    writeNFC();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  إدخال المعلومات إلي بطاقة NFC
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    إدخال المعلومات إلي بطاقة NFC
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    يرجي تقريب بطاقة NFC من الهاتف
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    onClick={() => setModalOpen(false)}
                     style={{ cursor: "pointer" }}
                   >
-                    إدخال المعلومات إلي بطاقة NFC
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      إدخال المعلومات إلي بطاقة NFC
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      يرجي تقريب بطاقة NFC من الهاتف
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel
-                      onClick={() => setModalOpen(false)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      إلغاء
-                    </AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+                    إلغاء
+                  </AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </CardContent>
       </Card>

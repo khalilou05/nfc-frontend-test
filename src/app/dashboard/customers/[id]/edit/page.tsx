@@ -187,141 +187,163 @@ export default function Page() {
                   autoComplete="email"
                   name="email"
                 />
-                <Label>مواقع التواصل </Label>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      className="cursor-pointer border-2 border-dashed"
-                      variant={"secondary"}
-                    >
-                      تعديل مواقع التواصل الإجتماعي
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="h-120">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        تعديل مواقع التواصل الإجتماعي
-                      </AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <div className="flex flex-col gap-2 p-2 w-full flex-1 overflow-y-auto">
-                      {Object.keys(socialMedia).map((key) => (
-                        <Label
-                          key={key}
-                          htmlFor={socialMedia[key].label}
-                          className="flex px-2  cursor-pointer rounded justify-between border-1 border-grey has-[:where([data-state=checked])]:outline-1
-                    has-[:where([data-state=checked])]:outline-black"
+
+                {customer.type === "customer" ? (
+                  <>
+                    <Label>مواقع التواصل </Label>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          className="cursor-pointer border-2 border-dashed"
+                          variant={"secondary"}
                         >
-                          <div className="flex gap-2 items-center ">
-                            {socialMedia[key].icon}
-                            {key.toUpperCase()}
-                          </div>
+                          تعديل مواقع التواصل الإجتماعي
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="h-120">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            تعديل مواقع التواصل الإجتماعي
+                          </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <div className="flex flex-col gap-2 p-2 w-full flex-1 overflow-y-auto">
+                          {Object.keys(socialMedia).map((key) => (
+                            <Label
+                              key={key}
+                              htmlFor={socialMedia[key].label}
+                              className="flex px-2  cursor-pointer rounded justify-between border-1 border-grey has-[:where([data-state=checked])]:outline-1
+                    has-[:where([data-state=checked])]:outline-black"
+                            >
+                              <div className="flex gap-2 items-center ">
+                                {socialMedia[key].icon}
+                                {key.toUpperCase()}
+                              </div>
 
-                          <Checkbox
-                            onCheckedChange={() => appendSocialMedia(key)}
-                            checked={
-                              key in
-                              (customer.socialMedia as Record<string, string>)
-                            }
-                            id={socialMedia[key].label}
+                              <Checkbox
+                                onCheckedChange={() => appendSocialMedia(key)}
+                                checked={
+                                  key in
+                                  (customer.socialMedia as Record<
+                                    string,
+                                    string
+                                  >)
+                                }
+                                id={socialMedia[key].label}
+                              />
+                            </Label>
+                          ))}
+                        </div>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel asChild>
+                            <Button className="w-full cursor-pointer">
+                              تم
+                            </Button>
+                          </AlertDialogCancel>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {Object.entries(customer.socialMedia).map(
+                      ([key, value]) => (
+                        <Fragment key={key}>
+                          <Label>{socialMedia[key].label}</Label>
+                          <Input
+                            onChange={(e) => handleSocialMedia(e, key)}
+                            value={value}
                           />
-                        </Label>
-                      ))}
-                    </div>
+                        </Fragment>
+                      )
+                    )}
 
-                    <AlertDialogFooter>
-                      <AlertDialogCancel asChild>
-                        <Button className="w-full cursor-pointer">تم</Button>
-                      </AlertDialogCancel>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                    <Label>صورة الغلاف</Label>
 
-                {Object.entries(customer.socialMedia).map(([key, value]) => (
-                  <Fragment key={key}>
-                    <Label>{socialMedia[key].label}</Label>
+                    <Label
+                      htmlFor="cover"
+                      className={clsx(
+                        "flex p-4 relative content-center justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
+                      )}
+                    >
+                      <Input
+                        onChange={(e) => {
+                          generatePervImg(e);
+                        }}
+                        id="cover"
+                        type="file"
+                        style={{
+                          opacity: 0,
+                          position: "absolute",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      {coverImage ? (
+                        <Image
+                          height={200}
+                          width={200}
+                          src={coverPerviewImage}
+                          style={{ objectFit: "cover" }}
+                          alt=""
+                        />
+                      ) : (
+                        <Image
+                          height={200}
+                          width={200}
+                          src={`https://media.twenty-print.com/${customer.coverImg}`}
+                          style={{ objectFit: "cover" }}
+                          alt=""
+                        />
+                      )}
+                    </Label>
+                    <Label>الصورة الشخصية</Label>
+
+                    <Label
+                      htmlFor="profile"
+                      className={clsx(
+                        "flex p-4 content-center relative justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
+                      )}
+                    >
+                      <Input
+                        onChange={(e) => {
+                          generatePervImg(e);
+                        }}
+                        id="profile"
+                        type="file"
+                        style={{
+                          opacity: 0,
+                          position: "absolute",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      {userImage ? (
+                        <Image
+                          height={200}
+                          width={200}
+                          src={userPerviewImage}
+                          style={{ objectFit: "cover" }}
+                          alt=""
+                        />
+                      ) : (
+                        <Image
+                          height={200}
+                          width={200}
+                          src={`https://media.twenty-print.com/${customer.profileImg}`}
+                          style={{ objectFit: "cover" }}
+                          alt=""
+                        />
+                      )}
+                    </Label>
+                  </>
+                ) : (
+                  <>
+                    <Label htmlFor="extUrl">الرابط</Label>
                     <Input
-                      onChange={(e) => handleSocialMedia(e, key)}
-                      value={value}
+                      id="extUrl"
+                      onChange={handleChange}
+                      name="absoluteUrl"
+                      value={customer.absoluteUrl ?? ""}
                     />
-                  </Fragment>
-                ))}
-
-                <Label>صورة الغلاف</Label>
-
-                <Label
-                  htmlFor="cover"
-                  className={clsx(
-                    "flex p-4 relative content-center justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
-                  )}
-                >
-                  <Input
-                    onChange={(e) => {
-                      generatePervImg(e);
-                    }}
-                    id="cover"
-                    type="file"
-                    style={{
-                      opacity: 0,
-                      position: "absolute",
-                      pointerEvents: "none",
-                    }}
-                  />
-                  {coverImage ? (
-                    <Image
-                      height={200}
-                      width={200}
-                      src={coverPerviewImage}
-                      style={{ objectFit: "cover" }}
-                      alt=""
-                    />
-                  ) : (
-                    <Image
-                      height={200}
-                      width={200}
-                      src={`https://media.twenty-print.com/${customer.coverImg}`}
-                      style={{ objectFit: "cover" }}
-                      alt=""
-                    />
-                  )}
-                </Label>
-                <Label>الصورة الشخصية</Label>
-
-                <Label
-                  htmlFor="profile"
-                  className={clsx(
-                    "flex p-4 content-center relative justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
-                  )}
-                >
-                  <Input
-                    onChange={(e) => {
-                      generatePervImg(e);
-                    }}
-                    id="profile"
-                    type="file"
-                    style={{
-                      opacity: 0,
-                      position: "absolute",
-                      pointerEvents: "none",
-                    }}
-                  />
-                  {userImage ? (
-                    <Image
-                      height={200}
-                      width={200}
-                      src={userPerviewImage}
-                      style={{ objectFit: "cover" }}
-                      alt=""
-                    />
-                  ) : (
-                    <Image
-                      height={200}
-                      width={200}
-                      src={`https://media.twenty-print.com/${customer.profileImg}`}
-                      style={{ objectFit: "cover" }}
-                      alt=""
-                    />
-                  )}
-                </Label>
+                  </>
+                )}
 
                 <div></div>
                 <Button

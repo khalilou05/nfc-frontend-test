@@ -35,6 +35,8 @@ export default function Page() {
   const [data, setData] = useState<Customer>({
     fullName: "",
     phoneNumber: "",
+    type: "customer",
+    absoluteUrl: "",
     email: "",
     socialMedia: {},
   });
@@ -117,6 +119,10 @@ export default function Page() {
     }));
   };
 
+  const handleCustmTypeChange = (value: typeof data.type) => {
+    setData((prv) => ({ ...prv, socialMedia: {}, type: value }));
+  };
+
   useEffect(() => {
     return () => {
       if (userPerviewImage) URL.revokeObjectURL(userPerviewImage);
@@ -164,134 +170,178 @@ export default function Page() {
                 required
                 name="email"
               />
-              <Label>مواقع التواصل </Label>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    className="cursor-pointer border-2 border-dashed"
-                    variant={"secondary"}
-                  >
-                    إضافة مواقع التواصل الإجتماعي
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="h-120">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      إختيار مواقع التواصل الإجتماعي
-                    </AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <div className="flex flex-col gap-2 p-2 w-full flex-1 overflow-y-auto">
-                    {Object.keys(socialMedia).map((key) => (
-                      <Label
-                        key={key}
-                        htmlFor={socialMedia[key].label}
-                        className="flex px-2  cursor-pointer rounded justify-between border-1 border-grey has-[:where([data-state=checked])]:outline-1
-      has-[:where([data-state=checked])]:outline-black"
+              <div className="flex justify-between gap-3">
+                <Label
+                  className="flex hover:bg-accent/50 has-checked:border-black justify-between border-1 border-gray rounded p-4 w-full cursor-pointer"
+                  htmlFor="customer"
+                >
+                  زبون
+                  <Checkbox
+                    checked={data.type === "customer"}
+                    onCheckedChange={() => handleCustmTypeChange("customer")}
+                    id="customer"
+                  />
+                </Label>
+                <Label
+                  className="flex hover:bg-accent/50 has-checked:border-black justify-between border-1 border-gray rounded p-4 w-full cursor-pointer"
+                  htmlFor="page"
+                >
+                  صفحة
+                  <Checkbox
+                    checked={data.type === "page"}
+                    onCheckedChange={() => handleCustmTypeChange("page")}
+                    id="page"
+                  />
+                </Label>
+              </div>
+              {data.type === "customer" ? (
+                <>
+                  <Label>مواقع التواصل </Label>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        className="cursor-pointer border-2 border-dashed"
+                        variant={"secondary"}
                       >
-                        <div className="flex gap-2 items-center ">
-                          {socialMedia[key].icon}
-                          {key.toUpperCase()}
-                        </div>
+                        إضافة مواقع التواصل الإجتماعي
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="h-120">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          إختيار مواقع التواصل الإجتماعي
+                        </AlertDialogTitle>
+                      </AlertDialogHeader>
+                      <div className="flex flex-col gap-2 p-2 w-full flex-1 overflow-y-auto">
+                        {Object.keys(socialMedia).map((key) => (
+                          <Label
+                            key={key}
+                            htmlFor={socialMedia[key].label}
+                            className="flex px-2  cursor-pointer rounded justify-between border-1 border-grey has-[:where([data-state=checked])]:outline-1
+      has-[:where([data-state=checked])]:outline-black"
+                          >
+                            <div className="flex gap-2 items-center ">
+                              {socialMedia[key].icon}
+                              {key.toUpperCase()}
+                            </div>
 
-                        <Checkbox
-                          onCheckedChange={() => appendSocialMedia(key)}
-                          checked={
-                            key in (data.socialMedia as Record<string, string>)
-                          }
-                          id={socialMedia[key].label}
+                            <Checkbox
+                              onCheckedChange={() => appendSocialMedia(key)}
+                              checked={
+                                key in
+                                (data.socialMedia as Record<string, string>)
+                              }
+                              id={socialMedia[key].label}
+                            />
+                          </Label>
+                        ))}
+                      </div>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel asChild>
+                          <Button className="w-full cursor-pointer">تم</Button>
+                        </AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  {data.socialMedia &&
+                    Object.keys(data.socialMedia).map((key) => (
+                      <Fragment key={key}>
+                        <Label htmlFor={key}>{socialMedia[key].label}</Label>
+                        <Input
+                          name={key}
+                          required
+                          onChange={handleSocialMedia}
+                          id={key}
                         />
-                      </Label>
+                      </Fragment>
                     ))}
-                  </div>
 
-                  <AlertDialogFooter>
-                    <AlertDialogCancel asChild>
-                      <Button className="w-full cursor-pointer">تم</Button>
-                    </AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                  <Label>صورة الغلاف</Label>
 
-              {Object.keys(data.socialMedia).map((key) => (
-                <Fragment key={key}>
-                  <Label htmlFor={key}>{socialMedia[key].label}</Label>
+                  <Label
+                    htmlFor="cover"
+                    className={clsx(
+                      "flex p-4 relative content-center justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
+                    )}
+                  >
+                    <Input
+                      onChange={(e) => {
+                        generatePervImg(e);
+                      }}
+                      id="cover"
+                      type="file"
+                      required
+                      style={{
+                        opacity: 0,
+                        position: "absolute",
+                        pointerEvents: "none",
+                      }}
+                    />
+                    {coverImage ? (
+                      <Image
+                        height={200}
+                        width={200}
+                        src={coverPerviewImage}
+                        style={{ objectFit: "cover" }}
+                        alt=""
+                      />
+                    ) : (
+                      <IMG className="w-20" />
+                    )}
+                  </Label>
+                  <Label>الصورة الشخصية</Label>
+
+                  <Label
+                    htmlFor="profile"
+                    className={clsx(
+                      "flex p-4 content-center relative justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
+                    )}
+                  >
+                    <Input
+                      onChange={(e) => {
+                        generatePervImg(e);
+                      }}
+                      id="profile"
+                      type="file"
+                      required
+                      style={{
+                        opacity: 0,
+                        position: "absolute",
+                        pointerEvents: "none",
+                      }}
+                    />
+                    {userImage ? (
+                      <Image
+                        height={200}
+                        width={200}
+                        src={userPerviewImage}
+                        style={{ objectFit: "cover" }}
+                        alt=""
+                      />
+                    ) : (
+                      <User style={{ scale: 2, stroke: "var(--border)" }} />
+                    )}
+                  </Label>
+                </>
+              ) : (
+                <>
+                  <Label htmlFor="absUrl">رابط الصفحة</Label>
                   <Input
-                    name={key}
-                    required
-                    onChange={handleSocialMedia}
-                    id={key}
+                    id="absUrl"
+                    placeholder="https://example.com"
+                    onChange={(e) =>
+                      setData((prv) => ({
+                        ...prv,
+                        absoluteUrl: e.target.value,
+                      }))
+                    }
+                    value={data.absoluteUrl}
                   />
-                </Fragment>
-              ))}
-
-              <Label>صورة الغلاف</Label>
-
-              <Label
-                htmlFor="cover"
-                className={clsx(
-                  "flex p-4 relative content-center justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
-                )}
-              >
-                <Input
-                  onChange={(e) => {
-                    generatePervImg(e);
-                  }}
-                  id="cover"
-                  type="file"
-                  required
-                  style={{
-                    opacity: 0,
-                    position: "absolute",
-                    pointerEvents: "none",
-                  }}
-                />
-                {coverImage ? (
-                  <Image
-                    height={200}
-                    width={200}
-                    src={coverPerviewImage}
-                    style={{ objectFit: "cover" }}
-                    alt=""
-                  />
-                ) : (
-                  <IMG className="w-20" />
-                )}
-              </Label>
-              <Label>الصورة الشخصية</Label>
-
-              <Label
-                htmlFor="profile"
-                className={clsx(
-                  "flex p-4 content-center relative justify-center cursor-pointer rounded-sm w-full h-auto border-2 border-dashed"
-                )}
-              >
-                <Input
-                  onChange={(e) => {
-                    generatePervImg(e);
-                  }}
-                  id="profile"
-                  type="file"
-                  required
-                  style={{
-                    opacity: 0,
-                    position: "absolute",
-                    pointerEvents: "none",
-                  }}
-                />
-                {userImage ? (
-                  <Image
-                    height={200}
-                    width={200}
-                    src={userPerviewImage}
-                    style={{ objectFit: "cover" }}
-                    alt=""
-                  />
-                ) : (
-                  <User style={{ scale: 2, stroke: "var(--border)" }} />
-                )}
-              </Label>
-
-              <div></div>
+                </>
+              )}
+              <div>&nbsp;</div>
               <Button
                 disabled={isLoading}
                 style={{ cursor: "pointer" }}
