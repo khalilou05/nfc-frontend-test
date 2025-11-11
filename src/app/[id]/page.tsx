@@ -8,7 +8,8 @@ import type { Customer } from "@/types/types";
 import type { Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+
+import { redirect } from "next/navigation";
 import { socialMedia } from "../../socialMedia";
 
 export const viewport: Viewport = {
@@ -22,8 +23,12 @@ export default async function Page({
 }) {
   const { id } = await params;
   const resp = await fetchApi(`/customers/${id}`);
-  if (!resp.ok) return notFound();
-  const customer = await resp.json<Customer>();
+
+  const customer = await resp.json<Customer & { redirect: string }>();
+
+  if (customer.redirect) {
+    redirect(customer.redirect);
+  }
 
   return (
     <div className="flex flex-col h-dvh w-dvw">
@@ -62,17 +67,18 @@ export default async function Page({
             <Link href={`mailto:${customer.email}`}>
               <Gmail />
             </Link>
-            {Object.entries(JSON.parse(customer.socialMedia as string)).map(
-              ([key, value]) => (
-                <Link
-                  href={value as string}
-                  key={key}
-                  target="_blank"
-                >
-                  {socialMedia[key].icon}
-                </Link>
-              )
-            )}
+            {customer.socialMedia &&
+              Object.entries(JSON.parse(customer.socialMedia as string)).map(
+                ([key, value]) => (
+                  <Link
+                    href={value as string}
+                    key={key}
+                    target="_blank"
+                  >
+                    {socialMedia[key].icon}
+                  </Link>
+                )
+              )}
           </div>
         </div>
         <div className="mt-auto flex justify-center">
