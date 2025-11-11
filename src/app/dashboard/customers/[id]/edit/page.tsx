@@ -244,17 +244,18 @@ export default function Page() {
                       </AlertDialogContent>
                     </AlertDialog>
 
-                    {Object.entries(customer.socialMedia).map(
-                      ([key, value]) => (
-                        <Fragment key={key}>
-                          <Label>{socialMedia[key].label}</Label>
-                          <Input
-                            onChange={(e) => handleSocialMedia(e, key)}
-                            value={value}
-                          />
-                        </Fragment>
-                      )
-                    )}
+                    {customer.socialMedia &&
+                      Object.entries(customer.socialMedia).map(
+                        ([key, value]) => (
+                          <Fragment key={key}>
+                            <Label>{socialMedia[key].label}</Label>
+                            <Input
+                              onChange={(e) => handleSocialMedia(e, key)}
+                              value={value}
+                            />
+                          </Fragment>
+                        )
+                      )}
 
                     <Label>صورة الغلاف</Label>
 
