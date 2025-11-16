@@ -13,7 +13,7 @@ export function useFetch<T>(endpoint: `/${string}`) {
         const baseUrl =
           process.env.NODE_ENV === "development"
             ? "http://localhost:8787"
-            : process.env.NEXT_PUBLIC_BASE_URL;
+            : "https://api.twenty-print.com";
         const resp = await fetch(`${baseUrl}${endpoint}`, {
           method: "GET",
           credentials: "include",
