@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useFetch } from "@/hooks/useFetch";
 import Eye from "@/icons/Eye";
 import PEN from "@/icons/PEN";
 import Trash from "@/icons/Trash";
@@ -33,14 +34,23 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { Customer } from "../../../types/types";
 
+interface Data {
+  customers: Customer[];
+  totalPages: number;
+  totalCustomers: number;
+}
+
 export function DataTableDemo() {
-  const [data, setData] = React.useState<Customer[]>([]);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState(1);
-  const [totalCustomer, setTotalCustomer] = React.useState<number | null>(null);
   const [query, setQuery] = React.useState("");
-  const [refetch, setRefetch] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const timeoutId = React.useRef<NodeJS.Timeout>(null);
+  const params = new URLSearchParams({
+    page: currentPage.toString(),
+  });
+  if (query) params.append("q", query);
+  const { data, isLoading, refetch, setIsLoading } = useFetch<Data>(
+    `/api/customers?${params.toString()}`
+  );
 
   const [selechAllcheckBox, setSelechAllcheckBox] = React.useState<
     boolean | "indeterminate"
@@ -49,7 +59,7 @@ export function DataTableDemo() {
     []
   );
   const nextPage = () => {
-    setCurrentPage((prv) => (prv === totalPages ? prv : prv + 1));
+    setCurrentPage((prv) => (prv === data?.totalPages ? prv : prv + 1));
   };
   const prevPage = () => {
     setCurrentPage((prv) => (prv === 1 ? prv : prv - 1));
@@ -74,7 +84,7 @@ export function DataTableDemo() {
       body: JSON.stringify([cus]),
     });
     if (resp.ok) {
-      setRefetch(!refetch);
+      refetch();
     }
   };
   const deleteAllCustomers = async () => {
@@ -87,107 +97,50 @@ export function DataTableDemo() {
       body: JSON.stringify(selectedCustomer),
     });
     if (resp.ok) {
-      setRefetch(!refetch);
+      refetch();
       setSelectedCustomer([]);
     }
   };
 
   const selectAll = () => {
-    if (selectedCustomer.length && selectedCustomer.length === data.length) {
+    if (
+      selectedCustomer.length &&
+      selectedCustomer.length === data?.customers.length
+    ) {
       setSelectedCustomer([]);
       return;
     }
-
-    setSelectedCustomer(data);
+    if (data?.customers) setSelectedCustomer(data?.customers);
   };
 
   const handleSearch = (query: string) => {
+    setIsLoading(true);
     setSelectedCustomer([]);
-    setQuery(query);
+    if (timeoutId.current) clearTimeout(timeoutId.current);
+    timeoutId.current = setTimeout(() => {
+      setQuery(query);
+    }, 200);
   };
 
   const router = useRouter();
 
   React.useEffect(() => {
-    if (selectedCustomer.length && selectedCustomer.length === data.length) {
+    if (
+      selectedCustomer.length &&
+      selectedCustomer.length === data?.customers.length
+    ) {
       setSelechAllcheckBox(true);
     }
-    if (selectedCustomer.length && selectedCustomer.length !== data.length) {
+    if (
+      selectedCustomer.length &&
+      selectedCustomer.length !== data?.customers.length
+    ) {
       setSelechAllcheckBox("indeterminate");
     }
     if (selectedCustomer.length === 0) {
       setSelechAllcheckBox(false);
     }
   }, [selectedCustomer, data]);
-
-  React.useEffect(() => {
-    const getCustomers = async () => {
-      try {
-        const urlSearchParams = new URLSearchParams();
-
-        urlSearchParams.append("page", currentPage.toString());
-
-        const resp = await fetchApi(
-          `/api/customers?${urlSearchParams.toString()}`,
-          { credentials: "include" }
-        );
-        if (resp.ok) {
-          const { data, totalCustomer, totalPages } = await resp.json<{
-            data: Customer[];
-            totalCustomer: number;
-            totalPages: number;
-          }>();
-          setData(data);
-          setTotalCustomer(totalCustomer);
-          setTotalPages(totalPages === 0 ? 1 : totalPages);
-        } else {
-          setData([]);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    setLoading(true);
-    getCustomers();
-  }, [currentPage, refetch]);
-  React.useEffect(() => {
-    const getCustomers = async () => {
-      try {
-        const urlSearchParams = new URLSearchParams();
-        if (query) {
-          urlSearchParams.append("q", query);
-        }
-        const resp = await fetchApi(
-          `/api/customers?${urlSearchParams.toString()}`,
-          { credentials: "include" }
-        );
-        if (resp.ok) {
-          const { data, totalCustomer, totalPages } = await resp.json<{
-            data: Customer[];
-            totalCustomer: number;
-            totalPages: number;
-          }>();
-          setData(data);
-          setTotalCustomer(totalCustomer);
-          setTotalPages(totalPages === 0 ? 1 : totalPages);
-        } else {
-          setData([]);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    setLoading(true);
-    const timeoutId = setTimeout(() => {
-      getCustomers();
-    }, 200);
-
-    return () => clearTimeout(timeoutId);
-  }, [query]);
 
   return (
     <div className="w-full  h-6/7 ">
@@ -233,7 +186,7 @@ export function DataTableDemo() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               Array.from({ length: 10 }).map((_, i) => (
                 <TableRow
                   className="h-[49px]"
@@ -246,7 +199,7 @@ export function DataTableDemo() {
                   ))}
                 </TableRow>
               ))
-            ) : !data.length ? (
+            ) : data?.customers && !data.customers.length ? (
               <TableRow>
                 <TableCell
                   className="h-3"
@@ -256,7 +209,7 @@ export function DataTableDemo() {
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((cus) => (
+              data?.customers.map((cus) => (
                 <TableRow
                   className="has-checked:bg-grey h-[49px]"
                   key={cus.id}
@@ -327,7 +280,7 @@ export function DataTableDemo() {
                 className="text-gray-500"
                 colSpan={6}
               >
-                إجمالي الزبائن {totalCustomer}
+                إجمالي الزبائن {data?.totalCustomers}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -345,13 +298,13 @@ export function DataTableDemo() {
             السابق
           </Button>
           <span>
-            صفحة {currentPage} - {totalPages}
+            صفحة {currentPage} - {data?.totalPages}
           </span>
           <Button
             className="cursor-pointer"
             variant="outline"
             size="sm"
-            disabled={currentPage === totalPages}
+            disabled={currentPage === data?.totalPages}
             onClick={nextPage}
           >
             التالي
