@@ -14,7 +14,7 @@ export async function fetchApi(
   const baseUrl = `${
     process.env.NODE_ENV === "development"
       ? "http://localhost:8787"
-      : "https://api.twenty-print.com"
+      : "nfc-card-backend-test.khalilbenmeziane.workers.dev"
   }`;
 
   const url = `${baseUrl}${endpoint}`;
