@@ -28,7 +28,7 @@ export async function fetchApi(
       credentials: "include",
     });
     if (refreshRes.ok) {
-      return await fetchApi(endpoint, config, false);
+      return fetchApi(endpoint, config, false);
     }
   }
   return resp;
