@@ -2,16 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // images: {
-  //   remotePatterns: [new URL("https://media.twenty-print.com/**")],
-  // },
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "media.twenty-print.com",
-        pathname: "**",
-      },
+      new URL("https://pub-ec7ee0ad07564c1cb75dc1c97493dbb2.r2.dev/**"),
     ],
   },
 };
