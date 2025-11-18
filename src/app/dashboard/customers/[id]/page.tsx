@@ -214,7 +214,7 @@ export default function Page({ params }: { params: Promise<{ id: number }> }) {
             excavate: true,
           }}
           ref={qrRef}
-          value={`https://twenty-print.com/${id}`}
+          value={`https://nfc-card-frontend-test.khalilbenmeziane.workers.dev/${id}`}
         />
 
         <Button

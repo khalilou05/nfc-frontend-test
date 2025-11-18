@@ -42,7 +42,7 @@ export default async function Page({
         <div className="absolute h-25 w-25 left-[50%] top-[100%] translate-[-50%] border-3 border-[#004f9f] rounded-full overflow-hidden">
           <Image
             fill
-            src={`https://https://pub-ec7ee0ad07564c1cb75dc1c97493dbb2.r2.dev/${customer.profileImg}`}
+            src={`https://pub-ec7ee0ad07564c1cb75dc1c97493dbb2.r2.dev/${customer.profileImg}`}
             style={{ objectFit: "cover" }}
             alt=""
           />
